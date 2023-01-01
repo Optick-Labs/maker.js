@@ -7514,8 +7514,17 @@ var MakerJs;
          */
         var chainLinkToPathDataMap = {};
         chainLinkToPathDataMap[MakerJs.pathType.Arc] = function (arc, endPoint, reversed, d, accuracy) {
-            d.push('A');
-            svgArcData(d, arc.radius, endPoint, accuracy, MakerJs.angle.ofArcSpan(arc) > 180, reversed ? (arc.startAngle > arc.endAngle) : (arc.startAngle < arc.endAngle));
+            //d.push('XYA');
+            // ME
+            d.push("L", MakerJs.round(endPoint[0], accuracy), MakerJs.round(endPoint[1], accuracy));
+            // svgArcData(
+            //     d,
+            //     arc.radius,
+            //     endPoint,
+            //     accuracy,
+            //     angle.ofArcSpan(arc) > 180,
+            //     reversed ? (arc.startAngle > arc.endAngle) : (arc.startAngle < arc.endAngle)
+            // );
         };
         chainLinkToPathDataMap[MakerJs.pathType.Line] = function (line, endPoint, reversed, d, accuracy) {
             d.push('L', MakerJs.round(endPoint[0], accuracy), MakerJs.round(endPoint[1], accuracy));
@@ -7594,7 +7603,7 @@ var MakerJs;
                 return svgPathDataMap[MakerJs.pathType.Circle](arc, accuracy);
             }
             else {
-                var d = ['A'];
+                var d = ['XZA'];
                 svgArcData(d, arc.radius, arcPoints[1], accuracy, MakerJs.angle.ofArcSpan(arc) > 180, arc.startAngle > arc.endAngle);
                 return startSvgPathData(arcPoints[0], d, accuracy);
             }
@@ -7950,7 +7959,7 @@ var MakerJs;
                         circleInPaths(id, arc.origin, arc.radius, layer, route, annotate, flow);
                     }
                     else {
-                        var d = ['A'];
+                        var d = ['XTA'];
                         svgArcData(d, arc.radius, arcPoints[1], opts.accuracy, MakerJs.angle.ofArcSpan(arc) > 180, arc.startAngle > arc.endAngle);
                         drawPath(id, arcPoints[0][0], arcPoints[0][1], d, layer, route, MakerJs.point.middle(arc), annotate, flow);
                         if (flow) {
@@ -8043,7 +8052,7 @@ var MakerJs;
             var r = MakerJs.round(radius, accuracy);
             var d = ['m', -r, 0];
             function halfCircle(sign) {
-                d.push('a');
+                d.push('Xa');
                 svgArcData(d, r, [2 * r * sign, 0], accuracy, false, !clockwiseCircle);
             }
             halfCircle(1);
@@ -8056,14 +8065,15 @@ var MakerJs;
          */
         function svgBezierData(d, seed, accuracy, reversed) {
             if (seed.controls.length === 1) {
-                d.push('Q', MakerJs.round(seed.controls[0][0], accuracy), MakerJs.round(seed.controls[0][1], accuracy));
+                // ME
+                // d.push('XXQ', round(seed.controls[0][0], accuracy), round(seed.controls[0][1], accuracy));
             }
             else {
                 var controls = reversed ? [seed.controls[1], seed.controls[0]] : seed.controls;
-                d.push('C', MakerJs.round(controls[0][0], accuracy), MakerJs.round(controls[0][1], accuracy), MakerJs.round(controls[1][0], accuracy), MakerJs.round(controls[1][1], accuracy));
+                // d.push('XXC', round(controls[0][0], accuracy), round(controls[0][1], accuracy), round(controls[1][0], accuracy), round(controls[1][1], accuracy));
             }
             var final = reversed ? seed.origin : seed.end;
-            d.push(MakerJs.round(final[0], accuracy), MakerJs.round(final[1], accuracy));
+            d.push("L", MakerJs.round(final[0], accuracy), MakerJs.round(final[1], accuracy));
         }
         /**
          * @private

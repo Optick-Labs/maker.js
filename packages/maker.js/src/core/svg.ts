@@ -32,15 +32,17 @@ namespace MakerJs.exporter {
     var chainLinkToPathDataMap: IChainLinkToPathDataMap = {};
 
     chainLinkToPathDataMap[pathType.Arc] = function (arc: IPathArc, endPoint: IPoint, reversed: boolean, d: ISvgPathData, accuracy: number) {
-        d.push('A');
-        svgArcData(
-            d,
-            arc.radius,
-            endPoint,
-            accuracy,
-            angle.ofArcSpan(arc) > 180,
-            reversed ? (arc.startAngle > arc.endAngle) : (arc.startAngle < arc.endAngle)
-        );
+        //d.push('XYA');
+        // ME
+        d.push("L", round(endPoint[0], accuracy), round(endPoint[1], accuracy));
+        // svgArcData(
+        //     d,
+        //     arc.radius,
+        //     endPoint,
+        //     accuracy,
+        //     angle.ofArcSpan(arc) > 180,
+        //     reversed ? (arc.startAngle > arc.endAngle) : (arc.startAngle < arc.endAngle)
+        // );
     };
 
     chainLinkToPathDataMap[pathType.Line] = function (line: IPathLine, endPoint: IPoint, reversed: boolean, d: ISvgPathData, accuracy: number) {
@@ -144,7 +146,7 @@ namespace MakerJs.exporter {
             return svgPathDataMap[pathType.Circle](arc, accuracy);
         } else {
 
-            var d: ISvgPathData = ['A'];
+            var d: ISvgPathData = ['XZA'];
             svgArcData(
                 d,
                 arc.radius,
@@ -623,7 +625,7 @@ namespace MakerJs.exporter {
                     circleInPaths(id, arc.origin, arc.radius, layer, route, annotate, flow);
                 } else {
 
-                    var d = ['A'];
+                    var d = ['XTA'];
                     svgArcData(
                         d,
                         arc.radius,
@@ -749,7 +751,7 @@ namespace MakerJs.exporter {
         var d: ISvgPathData = ['m', -r, 0];
 
         function halfCircle(sign: number) {
-            d.push('a');
+            d.push('Xa');
             svgArcData(d, r, [2 * r * sign, 0], accuracy, false, !clockwiseCircle);
         }
 
@@ -766,13 +768,14 @@ namespace MakerJs.exporter {
      */
     function svgBezierData(d: ISvgPathData, seed: IPathBezierSeed, accuracy: number, reversed?: boolean) {
         if (seed.controls.length === 1) {
-            d.push('Q', round(seed.controls[0][0], accuracy), round(seed.controls[0][1], accuracy));
+            // ME
+            // d.push('XXQ', round(seed.controls[0][0], accuracy), round(seed.controls[0][1], accuracy));
         } else {
             var controls = reversed ? [seed.controls[1], seed.controls[0]] : seed.controls;
-            d.push('C', round(controls[0][0], accuracy), round(controls[0][1], accuracy), round(controls[1][0], accuracy), round(controls[1][1], accuracy));
+            // d.push('XXC', round(controls[0][0], accuracy), round(controls[0][1], accuracy), round(controls[1][0], accuracy), round(controls[1][1], accuracy));
         }
         var final = reversed ? seed.origin : seed.end;
-        d.push(round(final[0], accuracy), round(final[1], accuracy));
+        d.push("L", round(final[0], accuracy), round(final[1], accuracy));
     }
 
     /**
